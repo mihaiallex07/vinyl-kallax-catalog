@@ -116,7 +116,7 @@ export default function Home() {
 
       <main id="top">
         <section className="hero-section">
-          <div className="hero-copy"><p className="eyebrow">PRIVATE LISTENING ROOM / 2026</p><h1>Raftul tău,<br /><i>pus în ordine.</i></h1><p className="hero-intro">Un catalog interactiv pentru colecția de viniluri, aranjată pe rafturi KALLAX și gata de explorat.</p><div className="hero-links"><a href="#catalog" className="hero-cta">Intră în catalog <ArrowUpRight size={17} /></a><a href="/kallax" className="hero-cta secondary-cta">Vezi KALLAX în 3D <ArrowUpRight size={17} /></a></div></div>
+          <div className="hero-copy"><p className="eyebrow">PRIVATE LISTENING ROOM / 2026</p><h1>Raftul tău,<br /><i>pus în ordine.</i></h1><p className="hero-intro">Un catalog interactiv pentru colecția de viniluri, aranjată pe rafturi KALLAX și gata de explorat.</p><div className="hero-links"><a href="#catalog" className="hero-cta">Intră în catalog <ArrowUpRight size={17} /></a><a href={`${import.meta.env.BASE_URL}kallax`} className="hero-cta secondary-cta">Vezi KALLAX în 3D <ArrowUpRight size={17} /></a></div></div>
           <div className="hero-visual"><img src={heroImage} alt="Vinyl records arranged on a warm listening room table" onError={(event) => { event.currentTarget.style.display = "none"; }} /><div className="hero-stamp">NO.<br /><b>127</b><br />PRESSINGS</div><div className="hero-caption">ANALOG ARCHIVE<br /><span>Organized with intent</span></div></div>
         </section>
 
