@@ -3,8 +3,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./pages/Home";
 import KallaxPage from "./pages/KallaxPage";
-import { Route, Switch } from "wouter";
+import { Route, Router, Switch } from "wouter";
 
 export default function App() {
-  return <ErrorBoundary><TooltipProvider><Switch><Route path="/" component={Home} /><Route path="/kallax" component={KallaxPage} /></Switch></TooltipProvider></ErrorBoundary>;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return <ErrorBoundary><TooltipProvider><Router base={base}><Switch><Route path="/" component={Home} /><Route path="/kallax" component={KallaxPage} /></Switch></Router></TooltipProvider></ErrorBoundary>;
 }
