@@ -1,6 +1,6 @@
 # Todo
 
-- [x] Enlarge the KALLAX stage and reduce surrounding whitespace.
-- [x] Improve contrast and typography for category labels and counts.
-- [x] Use a warmer wood and darker cubby palette inspired by the reference.
-- [x] Verify desktop and mobile readability after the visual pass.
+- [ ] Build suggestion lists from existing catalog values for artists, formats, and labels.
+- [ ] Add searchable dropdowns with manual text entry to the add form.
+- [ ] Reuse the same autocomplete fields in the edit form.
+- [ ] Verify selecting existing values and entering new values manually.
