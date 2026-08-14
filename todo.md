@@ -1,7 +1,7 @@
 # Todo
 
-- [x] Configure Vite base path for GitHub Pages repository hosting.
-- [x] Add a static GitHub Pages deployment workflow using GitHub Actions.
-- [x] Keep all catalog data and interactions client-side with no backend dependency.
-- [x] Use resilient asset URLs and verify the production build.
-- [x] Test responsive desktop and mobile layouts before delivery.
+- [ ] Add a visible "Adaugă vinil" button and accessible form.
+- [ ] Persist user-added records in localStorage while keeping the site backend-free.
+- [ ] Add export support so local additions can be transferred into the catalog source.
+- [ ] Verify add, search, category, detail, and production build flows.
+- [ ] Inspect GitHub connector access and synchronize the revised project if authorized.
