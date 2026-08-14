@@ -6,4 +6,5 @@
 - [x] Grant invited collaborators read and add permissions.
 - [x] Add a dedicated KALLAX 2×4 visualization page with hover details.
 - [x] Verify TypeScript, production build, and GitHub Pages deploy.
-- [ ] Publish the updated firestore.rules in Firebase Console.
+- [x] Publish the updated firestore.rules in Firebase Console.
+- [x] Fix the GitHub Pages subdirectory route and cache-sensitive blank page.
