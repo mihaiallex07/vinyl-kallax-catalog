@@ -1,6 +1,6 @@
 # Todo
 
-- [x] Replace KALLAX back links with full-page anchors compatible with GitHub Pages.
-- [x] Hide the hardcoded 127 pressing count for anonymous visitors.
-- [x] Show collection totals only after the account is authorized.
-- [x] Verify navigation and anonymous privacy display on the live build.
+- [ ] Map each real collection category to a KALLAX cubby.
+- [ ] Remove the equal-slice 16-record grouping.
+- [ ] Display exact category counts in each cubby.
+- [ ] Verify category placement, hover details, and responsive layout.
