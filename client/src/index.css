@@ -216,3 +216,9 @@ h2 { font-size: clamp(38px, 4vw, 60px); letter-spacing: -.05em; line-height: .9;
 .select-or-manual { min-width: 0; }
 .select-or-manual select { width: 100%; }
 .manual-inline { display: block; margin-top: 9px; }
+
+/* Exact Category selector parity: wrapper is transparent; the native select owns all visual treatment. */
+.select-field-wrapper { min-width: 0; }
+.select-field-wrapper > label { display: block; }
+.manual-trigger { background: transparent; border: 0; color: var(--oxide); font: 10px var(--mono); margin-top: 7px; padding: 0; text-align: left; }
+.manual-trigger:hover { text-decoration: underline; }
