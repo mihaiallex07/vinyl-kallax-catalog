@@ -184,3 +184,19 @@ h2 { font-size: clamp(38px, 4vw, 60px); letter-spacing: -.05em; line-height: .9;
 .edit-record-button:hover, .delete-record-button:hover { transform: translateY(-1px); }
 .delete-record-button:hover { background: rgba(154,61,49,.08); }
 @media (max-width: 620px) { .detail-actions { flex-direction: column; } .edit-record-button, .delete-record-button { width: 100%; } }
+
+/* KALLAX readability pass: the furniture is the hero, with high-contrast labels and count badges inspired by warm walnut and ink-black cubbies. */
+.kallax-main { max-width: 1500px; padding: clamp(42px, 6vw, 82px) clamp(16px, 3.5vw, 56px) 110px; }
+.kallax-intro { margin-bottom: 42px; }
+.kallax-intro h1 { font-size: clamp(42px, 5.5vw, 76px); }
+.kallax-stage { margin: 0 auto; max-width: 1410px; width: 100%; }
+.kallax-frame { background: linear-gradient(135deg, #a66b41 0%, #774728 52%, #5d351f 100%); border: 24px solid #704223; box-shadow: 0 30px 0 rgba(54,31,19,.12), 22px 28px 42px rgba(43,25,16,.25), inset 0 0 0 2px rgba(255,224,186,.27); gap: 13px; padding: 14px; }
+.kallax-cubby { background: linear-gradient(155deg, #171713 0%, #0d0e0c 100%); box-shadow: inset 0 0 0 1px rgba(255,219,174,.1), inset 0 0 32px rgba(0,0,0,.72); min-height: clamp(245px, 25vw, 370px); padding: 17px; }
+.cubby-label { color: #f0ddc2; font-size: clamp(10px, 1vw, 13px); font-weight: 700; letter-spacing: .12em; text-shadow: 0 1px 5px rgba(0,0,0,.8); }
+.cubby-label span { color: #e06b53; font-size: .88em; }
+.cubby-count { background: #e7c39a; bottom: 12px; color: #1a1511; font-size: 10px; font-weight: 700; letter-spacing: .08em; padding: 5px 7px; right: 12px; text-transform: uppercase; }
+.record-spines { bottom: 34px; left: 17px; right: 17px; top: 52px; }
+.record-spine { border-left-color: rgba(255,255,255,.45); box-shadow: inset 0 0 0 1px rgba(255,255,255,.05); color: #fff2dc; min-width: 6px; }
+.record-spine span { font-size: 8.5px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,.7); }
+.kallax-shadow { filter: blur(25px); height: 34px; }
+@media (max-width: 800px) { .kallax-main { padding-left: 10px; padding-right: 10px; } .kallax-frame { border-width: 12px; gap: 7px; padding: 8px; } .kallax-cubby { min-height: 200px; padding: 10px; } .cubby-label { font-size: 8px; } .cubby-count { font-size: 8px; padding: 4px 5px; } .record-spines { bottom: 28px; left: 10px; right: 10px; top: 42px; } }
