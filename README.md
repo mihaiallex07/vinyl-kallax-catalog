@@ -23,3 +23,11 @@ Pentru verificarea build-ului GitHub Pages:
 ```bash
 VITE_BASE_PATH=/numele-repository-ului/ pnpm build
 ```
+
+## Configurare Firebase pentru colecția comună
+
+Aplicația folosește Firebase Authentication cu Google și Cloud Firestore. Fișierul `firestore.rules` limitează citirea și scrierea colecției `vinylRecords` la adresele Google autorizate ale proprietarilor.
+
+În Firebase Console, intră la **Firestore Database → Rules**, înlocuiește regulile existente cu conținutul fișierului `firestore.rules`, apoi apasă **Publish**. În **Authentication → Sign-in method**, providerul Google trebuie să fie Enabled, iar în **Authentication → Settings → Authorized domains** trebuie să existe `mihaiallex07.github.io`.
+
+La prima autentificare a unuia dintre cele două conturi, aplicația va inițializa automat Firestore cu cele 127 de discuri din catalog. După aceea, orice disc nou adăugat de unul dintre voi va fi vizibil și pentru celălalt. Datele nu mai sunt salvate în localStorage ca sursă principală.

@@ -1,8 +1,8 @@
 # Todo
 
-- [x] Add a visible "Adaugă vinil" button and accessible form.
-- [x] Persist user-added records in localStorage while keeping the site backend-free.
-- [x] Add export support so local additions can be transferred into the catalog source.
-- [x] Verify add, search, category, detail, and production build flows.
-- [x] Push the revised project to the public GitHub repository.
-- [ ] In GitHub repository settings, set Pages source to GitHub Actions; the connected token cannot enable the Pages site automatically.
+- [ ] Validate Firebase Spark limits and Google Authentication requirements from official documentation.
+- [ ] Add Firebase client configuration placeholders and setup documentation without committing secrets.
+- [ ] Define shared Firestore collection structure and security rules.
+- [ ] Replace localStorage reads/writes with Firebase Auth and Firestore.
+- [ ] Verify GitHub Pages build, Google sign-in, shared reads, and shared adds.
+- [ ] Document the one-time Firebase Console steps for the user.

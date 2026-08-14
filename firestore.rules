@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAllowedUser() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+          'mihai.alex480@gmail.com',
+          'adriwinx1313@gmail.com'
+        ];
+    }
+
+    match /vinylRecords/{recordId} {
+      allow read, write: if isAllowedUser();
+    }
+  }
+}

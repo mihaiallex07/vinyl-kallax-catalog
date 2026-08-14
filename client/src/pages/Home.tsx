@@ -1,5 +1,8 @@
 /* Hi-Fi Afterglow: editorial vinyl catalog, warm paper surfaces, oxide-red signal color, asymmetric rail + inventory rows. */
 import { useEffect, useMemo, useState } from "react";
+import { onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
+import { collection, doc, getDocs, orderBy, query as firestoreQuery, setDoc, writeBatch } from "firebase/firestore";
+import { auth, db, googleProvider } from "@/lib/firebase";
 import { Search, SlidersHorizontal, Disc3, ArrowUpRight, X, ChevronDown, Library, ScanSearch, Plus, Download } from "lucide-react";
 import { catalog, type VinylRecord } from "@/data/catalog";
 
@@ -76,12 +79,17 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<VinylRecord | null>(null);
   const [sortBy, setSortBy] = useState<"position" | "artist" | "year">("position");
-  const [localRecords, setLocalRecords] = useState<VinylRecord[]>([]);
+  const [sharedRecords, setSharedRecords] = useState<VinylRecord[]>(catalog);
+  const [authUser, setAuthUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState("");
   const [showAdd, setShowAdd] = useState(false);
-  useEffect(() => { try { setLocalRecords(JSON.parse(localStorage.getItem("vinyl-kallax-local-records") || "[]")); } catch { setLocalRecords([]); } }, []);
-  const allRecords = useMemo(() => [...catalog, ...localRecords], [localRecords]);
-  const addRecord = (record: VinylRecord) => { const next = [...localRecords, record]; setLocalRecords(next); localStorage.setItem("vinyl-kallax-local-records", JSON.stringify(next)); };
-  const exportLocalRecords = () => { const blob = new Blob([JSON.stringify(localRecords, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = "vinyl-kallax-new-records.json"; link.click(); URL.revokeObjectURL(url); };
+  useEffect(() => onAuthStateChanged(auth, async (user) => { setAuthUser(user); setAuthLoading(false); if (!user) return; try { const snapshot = await getDocs(firestoreQuery(collection(db, "vinylRecords"), orderBy("position", "asc"))); if (snapshot.empty) { const batch = writeBatch(db); catalog.forEach((record) => batch.set(doc(db, "vinylRecords", String(record.position)), record)); await batch.commit(); setSharedRecords(catalog); } else { setSharedRecords(snapshot.docs.map((item) => item.data() as VinylRecord)); } } catch (error) { console.error(error); setAuthError("Nu am putut încărca colecția din Firebase."); } }), []);
+  const allRecords = sharedRecords;
+  const addRecord = async (record: VinylRecord) => { if (!authUser) { setAuthError("Autentifică-te cu Google înainte să adaugi un vinil."); return; } try { await setDoc(doc(db, "vinylRecords", String(record.position)), record); setSharedRecords((current) => [...current, record].sort((a, b) => a.position - b.position)); } catch (error) { console.error(error); setAuthError("Vinilul nu a putut fi salvat în Firebase."); } };
+  const exportLocalRecords = () => { const blob = new Blob([JSON.stringify(allRecords, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = "vinyl-kallax-collection.json"; link.click(); URL.revokeObjectURL(url); };
+  const signIn = async () => { try { setAuthError(""); await signInWithPopup(auth, googleProvider); } catch (error) { console.error(error); setAuthError("Autentificarea Google nu a reușit. Verifică domeniul autorizat în Firebase."); } };
+  const signOutUser = () => signOut(auth);
 
   const visibleRecords = useMemo(() => {
     const needle = query.toLocaleLowerCase("ro").trim();
@@ -98,7 +106,7 @@ export default function Home() {
       <header className="topbar">
         <a className="brand" href="#top" aria-label="Vinyl KALLAX Catalog home"><span className="brand-mark"><img src={markImage} alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span><span>VINYL<br /><em>KALLAX</em></span></a>
         <div className="topbar-meta"><span className="status-dot" /> catalog live <span className="meta-divider" /> {allRecords.length} records</div>
-        <div className="topbar-actions"><button className="add-top-button" onClick={() => setShowAdd(true)}><Plus size={15} /> Adaugă vinil</button><a className="topbar-link" href="#catalog">Explore collection <ArrowUpRight size={15} /></a></div>
+        <div className="topbar-actions">{authUser ? <button className="account-button" onClick={signOutUser} title="Ieșire din cont"><span className="avatar-dot">{(authUser.displayName || authUser.email || "G")[0].toUpperCase()}</span>{authUser.displayName?.split(" ")[0] || "Cont"}</button> : <button className="login-button" onClick={signIn}>{authLoading ? "..." : "Intră cu Google"}</button>}<button className="add-top-button" onClick={() => authUser ? setShowAdd(true) : signIn()}><Plus size={15} /> Adaugă vinil</button><a className="topbar-link" href="#catalog">Explore collection <ArrowUpRight size={15} /></a></div>
       </header>
 
       <main id="top">
@@ -112,14 +120,15 @@ export default function Home() {
         <section className="catalog-layout" id="catalog">
           <aside className="category-rail"><div className="rail-heading"><span>Index</span><span>01—07</span></div><button className={`category-link ${activeCategory === "Toată colecția" ? "active" : ""}`} onClick={() => setActiveCategory("Toată colecția")}><span>00</span><strong>Toată colecția</strong><em>{allRecords.length}</em></button>{categories.map((category, index) => <button key={category} className={`category-link ${activeCategory === category ? "active" : ""}`} onClick={() => setActiveCategory(category)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{categoryShort(category)}</strong><em>{allRecords.filter((item) => item.category === category).length}</em></button>)}<div className="rail-footer"><Library size={17} /><span>Ordine KALLAX<br /><b>stânga → dreapta</b></span></div></aside>
 
-          <div className="catalog-content"><div className="catalog-heading"><div><p className="eyebrow">THE COLLECTION / {activeCategory === "Toată colecția" ? "ALL SHELVES" : activeCategory.split(" — ")[0]}</p><h2>{activeCategory === "Toată colecția" ? "Toată colecția" : categoryShort(activeCategory)}</h2></div><span className="result-count">{visibleRecords.length} rezultate</span><div className="catalog-actions">{localRecords.length > 0 && <button className="export-button" onClick={exportLocalRecords}><Download size={14} /> Exportă {localRecords.length}</button>}<button className="add-inline-button" onClick={() => setShowAdd(true)}><Plus size={14} /> Adaugă vinil</button></div></div>
+          <div className="catalog-content"><div className="catalog-heading"><div><p className="eyebrow">THE COLLECTION / {activeCategory === "Toată colecția" ? "ALL SHELVES" : activeCategory.split(" — ")[0]}</p><h2>{activeCategory === "Toată colecția" ? "Toată colecția" : categoryShort(activeCategory)}</h2></div><span className="result-count">{visibleRecords.length} rezultate</span><div className="catalog-actions"><button className="export-button" onClick={exportLocalRecords}><Download size={14} /> Exportă</button><button className="add-inline-button" onClick={() => authUser ? setShowAdd(true) : signIn()}><Plus size={14} /> Adaugă vinil</button></div></div>
             <div className="tool-row"><label className="search-field"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Caută artist, titlu, label..." aria-label="Caută în colecție" />{query && <button onClick={() => setQuery("")} aria-label="Șterge căutarea"><X size={16} /></button>}</label><div className="sort-control"><SlidersHorizontal size={16} /><select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)} aria-label="Sortează colecția"><option value="position">Ordine KALLAX</option><option value="artist">Artist A—Z</option><option value="year">An</option></select><ChevronDown size={15} /></div></div>
             {activeCategory !== "Toată colecția" && categoryImages[activeCategory] && <div className="category-banner"><img src={categoryImages[activeCategory]} alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} /><div><span>Zone note</span><strong>{categoryShort(activeCategory)}</strong></div><span className="banner-count">{visibleRecords.length} / {allRecords.filter((item) => item.category === activeCategory).length}</span></div>}
             <div className="records-list">{visibleRecords.map((record) => <RecordRow key={`${record.position}-${record.catalog}`} record={record} onOpen={setSelected} />)}{visibleRecords.length === 0 && <div className="empty-state"><ScanSearch size={30} /><h3>Nimic găsit</h3><p>Încearcă un alt artist, titlu sau schimbă categoria.</p></div>}</div>
           </div>
         </section>
       </main>
-      <footer className="site-footer"><span>VINYL KALLAX CATALOG</span><span>Analog archive / made for the listening room</span><span>01—127</span></footer>
+      {authError && <div className="auth-toast" role="status">{authError}<button onClick={() => setAuthError("")} aria-label="Închide mesajul"><X size={15} /></button></div>}
+      <footer className="site-footer"><span>VINYL KALLAX CATALOG</span><span>{authUser ? `Shared cloud archive / ${authUser.email}` : "Shared archive / sign in to sync"}</span><span>01—{String(allRecords.length).padStart(3, "0")}</span></footer>
       <DetailSheet record={selected} onClose={() => setSelected(null)} />{showAdd && <AddVinylSheet nextPosition={Math.max(...allRecords.map((item) => item.position), 0) + 1} onAdded={addRecord} onClose={() => setShowAdd(false)} />}
     </div>
   );

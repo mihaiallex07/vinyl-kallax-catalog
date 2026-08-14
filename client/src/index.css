@@ -129,3 +129,12 @@ h2 { font-size: clamp(38px, 4vw, 60px); letter-spacing: -.05em; line-height: .9;
 .submit-button { align-items: center; background: var(--oxide); border: 1px solid var(--oxide); color: var(--paper); display: inline-flex; font: 600 10px var(--mono); gap: 8px; justify-content: center; letter-spacing: .08em; margin-top: 9px; padding: 14px; text-transform: uppercase; transition: filter .18s ease, transform .18s ease; }
 .submit-button:hover { filter: saturate(1.1) brightness(.94); transform: translateY(-1px); }
 @media (max-width: 600px) { .topbar-actions { gap: 9px; } .add-top-button { font-size: 0; padding: 9px; } .add-top-button svg { margin: 0; } .catalog-actions { align-items: flex-start; justify-content: flex-start; } .catalog-actions .result-count { flex-basis: 100%; } }
+
+/* Firebase shared access: visible but quiet account controls. */
+.login-button, .account-button { align-items: center; background: transparent; border: 1px solid var(--line); color: var(--ink); display: inline-flex; font: 500 10px var(--mono); gap: 7px; letter-spacing: .05em; padding: 10px 11px; text-transform: uppercase; }
+.login-button:hover { border-color: var(--oxide); color: var(--oxide); }
+.account-button { border-color: rgba(135,144,126,.55); color: var(--ink-soft); text-transform: none; }
+.avatar-dot { align-items: center; background: var(--sage); border-radius: 50%; color: var(--paper); display: inline-flex; font: 600 10px var(--body); height: 19px; justify-content: center; width: 19px; }
+.auth-toast { align-items: center; background: var(--ink); bottom: 22px; box-shadow: 0 10px 30px rgba(27,27,25,.22); color: var(--paper); display: flex; font: 11px/1.4 var(--body); gap: 18px; max-width: min(440px, calc(100vw - 40px)); padding: 14px 15px 14px 18px; position: fixed; right: 22px; z-index: 30; }
+.auth-toast button { background: transparent; border: 0; color: var(--paper); display: grid; padding: 0; }
+@media (max-width: 850px) { .topbar-actions { gap: 8px; } .login-button, .account-button { font-size: 0; padding: 9px; } .login-button::before { content: 'G'; font: 700 11px var(--body); } .account-button .avatar-dot { margin: 0; } }
