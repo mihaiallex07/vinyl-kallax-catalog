@@ -88,7 +88,7 @@ export default function Home() {
   const allRecords = sharedRecords;
   const addRecord = async (record: VinylRecord) => { if (!authUser) { setAuthError("Autentifică-te cu Google înainte să adaugi un vinil."); return; } try { await setDoc(doc(db, "vinylRecords", String(record.position)), record); setSharedRecords((current) => [...current, record].sort((a, b) => a.position - b.position)); } catch (error) { console.error(error); setAuthError("Vinilul nu a putut fi salvat în Firebase."); } };
   const exportLocalRecords = () => { const blob = new Blob([JSON.stringify(allRecords, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = "vinyl-kallax-collection.json"; link.click(); URL.revokeObjectURL(url); };
-  const signIn = async () => { try { setAuthError(""); await signInWithPopup(auth, googleProvider); } catch (error) { console.error(error); setAuthError("Autentificarea Google nu a reușit. Verifică domeniul autorizat în Firebase."); } };
+  const signIn = async () => { try { setAuthError(""); await signInWithPopup(auth, googleProvider); } catch (error) { console.error(error); const code = typeof error === "object" && error && "code" in error ? String((error as { code: string }).code) : "unknown"; setAuthError(`Autentificarea Google nu a reușit (${code}). Verifică setările Firebase.`); } };
   const signOutUser = () => signOut(auth);
 
   const visibleRecords = useMemo(() => {
