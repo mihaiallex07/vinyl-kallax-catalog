@@ -138,3 +138,40 @@ h2 { font-size: clamp(38px, 4vw, 60px); letter-spacing: -.05em; line-height: .9;
 .auth-toast { align-items: center; background: var(--ink); bottom: 22px; box-shadow: 0 10px 30px rgba(27,27,25,.22); color: var(--paper); display: flex; font: 11px/1.4 var(--body); gap: 18px; max-width: min(440px, calc(100vw - 40px)); padding: 14px 15px 14px 18px; position: fixed; right: 22px; z-index: 30; }
 .auth-toast button { background: transparent; border: 0; color: var(--paper); display: grid; padding: 0; }
 @media (max-width: 850px) { .topbar-actions { gap: 8px; } .login-button, .account-button { font-size: 0; padding: 9px; } .login-button::before { content: 'G'; font: 700 11px var(--body); } .account-button .avatar-dot { margin: 0; } }
+
+/* KALLAX 2x4: warm wood frame, depth through perspective, and tactile record spines. */
+.kallax-page { background: var(--paper); color: var(--ink); min-height: 100vh; }
+.kallax-header { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 18px clamp(18px, 6vw, 88px); }
+.kallax-wordmark { align-items: center; display: flex; font: 700 10px/1.05 var(--mono); gap: 9px; letter-spacing: .12em; }
+.kallax-wordmark em { color: var(--oxide); font-style: normal; }
+.back-link, .text-link { align-items: center; color: var(--ink-soft); display: inline-flex; font: 500 10px var(--mono); gap: 7px; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
+.back-link:hover, .text-link:hover { color: var(--oxide); }
+.kallax-meta, .signed-note { color: var(--ink-faint); font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.kallax-main { margin: 0 auto; max-width: 1320px; padding: clamp(50px, 9vw, 120px) clamp(18px, 6vw, 88px) 120px; position: relative; }
+.kallax-intro { align-items: end; display: flex; justify-content: space-between; margin-bottom: 68px; }
+.kallax-intro h1 { font: 500 clamp(45px, 7vw, 88px)/.9 var(--display); letter-spacing: -.05em; margin: 15px 0 20px; }
+.kallax-intro h1 i { color: var(--oxide); font-style: italic; }
+.kallax-intro p:not(.eyebrow) { color: var(--ink-soft); font-size: 15px; line-height: 1.55; max-width: 355px; }
+.kallax-actions { align-items: end; display: flex; flex-direction: column; gap: 20px; }
+.kallax-stage { perspective: 1300px; position: relative; }
+.kallax-frame { background: #8d5e3d; border: 20px solid #6e4228; box-shadow: 20px 25px 0 rgba(53,33,21,.17), inset 0 0 0 2px rgba(255,220,176,.2); display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); padding: 13px; transform: rotateX(4deg) rotateY(-6deg); transform-origin: center; }
+.kallax-cubby { background: #1b1814; box-shadow: inset 0 0 20px rgba(0,0,0,.72), 0 1px 0 rgba(255,230,190,.12); min-height: clamp(210px, 24vw, 330px); overflow: hidden; padding: 14px; position: relative; }
+.cubby-label { color: #d6b38c; display: flex; font: 9px var(--mono); justify-content: space-between; letter-spacing: .1em; position: relative; text-transform: uppercase; z-index: 2; }
+.cubby-label span { color: var(--oxide); }
+.record-spines { align-items: end; bottom: 20px; display: flex; gap: 2px; left: 13px; position: absolute; right: 13px; top: 42px; }
+.record-spine { background: hsl(var(--spine) 30% 26%); border: 0; border-left: 1px solid rgba(255,255,255,.3); color: rgba(255,241,218,.8); flex: 1; height: 75%; min-width: 5px; overflow: hidden; padding: 8px 2px; position: relative; transition: flex .2s cubic-bezier(.23,1,.32,1), transform .2s ease, filter .2s ease; }
+.record-spine:nth-child(3n) { height: 88%; } .record-spine:nth-child(5n) { height: 65%; }
+.record-spine:hover, .record-spine:focus { filter: brightness(1.35); flex: 5; outline: 1px solid #d6b38c; transform: translateY(-6px); z-index: 4; }
+.record-spine span { display: block; font: 8px var(--mono); max-height: 100%; overflow: hidden; text-align: left; text-transform: uppercase; writing-mode: vertical-rl; }
+.cubby-count { bottom: 8px; color: rgba(255,255,255,.33); font: 8px var(--mono); position: absolute; right: 12px; }
+.kallax-shadow { background: rgba(48,31,20,.18); filter: blur(22px); height: 28px; margin: -3px 4% 0; transform: rotate(-2deg); }
+.vinyl-hover-card { background: var(--paper); border: 1px solid var(--line); box-shadow: 15px 15px 0 rgba(55,38,27,.1); max-width: 310px; padding: 20px; position: fixed; right: clamp(18px, 6vw, 88px); top: 120px; z-index: 10; }
+.vinyl-hover-card h2 { font: 400 25px var(--display); margin: 10px 0 2px; }
+.vinyl-hover-card > p { color: var(--oxide); font: 12px var(--mono); margin: 0 0 18px; }
+.vinyl-hover-card dl { border-top: 1px solid var(--line); display: grid; gap: 9px; margin: 0; padding-top: 14px; }
+.vinyl-hover-card dl div { display: flex; justify-content: space-between; gap: 18px; } .vinyl-hover-card dt { color: var(--ink-faint); font: 9px var(--mono); text-transform: uppercase; } .vinyl-hover-card dd { font-size: 11px; margin: 0; text-align: right; }
+.kallax-gate { align-items: flex-start; border: 1px solid var(--line); display: flex; flex-direction: column; max-width: 540px; padding: 42px; }
+.kallax-gate h2 { font: 400 32px var(--display); margin: 15px 0 8px; } .kallax-gate p { color: var(--ink-soft); margin-bottom: 24px; }
+.invite-button { background: var(--sage); border: 1px solid var(--sage); color: var(--paper); font: 500 10px var(--mono); letter-spacing: .06em; padding: 10px 11px; text-transform: uppercase; }
+.private-gate { border: 1px solid var(--line); padding: clamp(28px, 5vw, 58px); } .private-gate h2 { font: 400 clamp(30px, 4vw, 52px) var(--display); margin: 12px 0; } .private-gate h2 i { color: var(--oxide); } .private-gate p:not(.eyebrow) { color: var(--ink-soft); line-height: 1.6; max-width: 450px; }
+@media (max-width: 800px) { .kallax-header { padding: 15px 18px; } .kallax-meta { display: none; } .kallax-intro { align-items: flex-start; flex-direction: column; gap: 30px; } .kallax-actions { align-items: flex-start; } .kallax-frame { border-width: 12px; gap: 7px; padding: 8px; transform: none; } .kallax-cubby { min-height: 190px; padding: 8px; } .cubby-label { font-size: 7px; } .vinyl-hover-card { bottom: 16px; left: 16px; right: 16px; top: auto; } }

@@ -2,17 +2,32 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAllowedUser() {
-      return request.auth != null
-        && request.auth.token.email_verified == true
-        && request.auth.token.email in [
-          'mihai.alex480@gmail.com',
-          'adriwinx1313@gmail.com'
-        ];
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isOwner() {
+      return signedIn() && request.auth.token.email == 'mihai.alex480@gmail.com';
+    }
+
+    function isMember() {
+      return signedIn()
+        && request.auth.token.email in get(/databases/$(database)/documents/collections/main).data.memberEmails;
+    }
+
+    match /collections/main {
+      allow read: if signedIn() && (isOwner() || request.auth.token.email in resource.data.memberEmails);
+      allow create: if isOwner()
+        && request.resource.data.ownerEmail == 'mihai.alex480@gmail.com'
+        && request.resource.data.memberEmails.hasAll(['mihai.alex480@gmail.com']);
+      allow update: if isOwner()
+        && request.resource.data.ownerEmail == resource.data.ownerEmail;
+      allow delete: if false;
     }
 
     match /vinylRecords/{recordId} {
-      allow read, write: if isAllowedUser();
+      allow read, create, update: if isOwner() || isMember();
+      allow delete: if isOwner() || isMember();
     }
   }
 }
