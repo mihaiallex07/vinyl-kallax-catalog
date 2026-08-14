@@ -4,12 +4,12 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBeZ2eLK7iG1XBYNo0SytRfHGgUU3GTy50Q",
+  apiKey: "AIzaSyBe2LK7igL1XBYNoOSytRfHGgUU3GTy5OQ",
   authDomain: "vinyl-kallax.firebaseapp.com",
   projectId: "vinyl-kallax",
   storageBucket: "vinyl-kallax.firebasestorage.app",
   messagingSenderId: "518673688987",
-  appId: "1:518673688987:web:63c58b6a80eefadfa993e",
+  appId: "1:518673688987:web:638c58b6a80eefadfa993e",
 };
 
 const app = initializeApp(firebaseConfig);
