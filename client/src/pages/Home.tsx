@@ -19,6 +19,12 @@ const categoryShort = (category: string) => category.replace(/^\d+ — /, "");
 const artistSuggestions = Array.from(new Set(catalog.map((item) => item.artist).filter(Boolean))).sort((a, b) => a.localeCompare(b, "ro"));
 const formatSuggestions = Array.from(new Set(catalog.map((item) => item.format).filter(Boolean))).sort((a, b) => a.localeCompare(b, "ro"));
 const labelSuggestions = Array.from(new Set(catalog.map((item) => item.label).filter(Boolean))).sort((a, b) => a.localeCompare(b, "ro"));
+const youtubeSearch = (term: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(term)}`;
+const spotifySearch = (term: string) => `https://open.spotify.com/search/${encodeURIComponent(term)}`;
+
+function ListenButtons({ term, label = "Ascultă" }: { term: string; label?: string }) {
+  return <div className="listen-links" aria-label={`${label} pe platforme externe`}><a className="listen-button youtube-button" href={youtubeSearch(term)} target="_blank" rel="noreferrer"><span className="platform-dot">▶</span>YouTube <ArrowUpRight size={13} /></a><a className="listen-button spotify-button" href={spotifySearch(term)} target="_blank" rel="noreferrer"><span className="platform-dot">●</span>Spotify <ArrowUpRight size={13} /></a></div>;
+}
 
 function SuggestField({ label, value, onChange, options, placeholder }: { label: string; value: string; onChange: (value: string) => void; options: string[]; placeholder?: string }) {
   const [open, setOpen] = useState(false);
@@ -88,6 +94,7 @@ function DetailSheet({ record, onClose, onEdit, onDelete }: { record: VinylRecor
           <div><span>Label</span><strong>{record.label || "—"}</strong></div>
         </div>
         <div className="detail-note"><span>Artist group</span><p>{record.group}</p></div>
+        <ListenButtons term={`${record.artist} ${record.title}`} label="Ascultă albumul" />
         <div className="detail-actions"><button className="edit-record-button" onClick={() => onEdit(record)}><Pencil size={15} /> Editează</button><button className="delete-record-button" onClick={() => onDelete(record)}><Trash2 size={15} /> Șterge</button></div>
       </aside>
     </div>
@@ -150,7 +157,7 @@ export default function Home() {
 
           <div className="catalog-content">{!authUser ? <div className="private-gate"><p className="eyebrow">PRIVATE LISTENING ROOM</p><h2>Autentifică-te pentru<br /><i>a vedea colecția.</i></h2><p>Colecția este privată și aparține contului Mihai. Doar proprietarul și colaboratorii invitați pot vedea sau adăuga discuri.</p><button className="login-button" onClick={signIn}>Intră cu Google</button></div> : !isMember ? <div className="private-gate"><p className="eyebrow">ACCESS REQUIRED</p><h2>Acest cont nu are<br /><i>acces încă.</i></h2><p>Roagă proprietarul colecției să te invite cu adresa ta Google.</p></div> : <><div className="catalog-heading"><div><p className="eyebrow">THE COLLECTION / {activeCategory === "Toată colecția" ? "ALL SHELVES" : activeCategory.split(" — ")[0]}</p><h2>{activeCategory === "Toată colecția" ? "Toată colecția" : categoryShort(activeCategory)}</h2></div><span className="result-count">{visibleRecords.length} rezultate</span><div className="catalog-actions"><button className="export-button" onClick={exportLocalRecords}><Download size={14} /> Exportă</button><button className="add-inline-button" onClick={() => authUser ? setShowAdd(true) : signIn()}><Plus size={14} /> Adaugă vinil</button></div></div>
             <div className="tool-row"><label className="search-field"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Caută artist, titlu, label..." aria-label="Caută în colecție" />{query && <button onClick={() => setQuery("")} aria-label="Șterge căutarea"><X size={16} /></button>}</label><div className="sort-control"><SlidersHorizontal size={16} /><select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)} aria-label="Sortează colecția"><option value="position">Ordine KALLAX</option><option value="artist">Artist A—Z</option><option value="year">An</option></select><ChevronDown size={15} /></div></div>
-            {activeCategory !== "Toată colecția" && categoryImages[activeCategory] && <div className="category-banner"><img src={categoryImages[activeCategory]} alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} /><div><span>Zone note</span><strong>{categoryShort(activeCategory)}</strong></div><span className="banner-count">{visibleRecords.length} / {allRecords.filter((item) => item.category === activeCategory).length}</span></div>}
+            {activeCategory !== "Toată colecția" && categoryImages[activeCategory] && <div className="category-banner"><img src={categoryImages[activeCategory]} alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} /><div><span>Zone note</span><strong>{categoryShort(activeCategory)}</strong></div><span className="banner-count">{visibleRecords.length} / {allRecords.filter((item) => item.category === activeCategory).length}</span><ListenButtons term={categoryShort(activeCategory)} label="Ascultă categoria" /></div>}
             <div className="records-list">{visibleRecords.map((record) => <RecordRow key={`${record.position}-${record.catalog}`} record={record} onOpen={setSelected} />)}{visibleRecords.length === 0 && <div className="empty-state"><ScanSearch size={30} /><h3>Nimic găsit</h3><p>Încearcă un alt artist, titlu sau schimbă categoria.</p></div>}</div></>}
           </div>
         </section>

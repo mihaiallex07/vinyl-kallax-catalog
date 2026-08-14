@@ -1,6 +1,6 @@
 # Todo
 
-- [x] Replace the browser-native white list with a cream custom dropdown for Artist, Format, and Label.
-- [x] Match Category selected-row, border, spacing, and typography treatment.
-- [x] Keep long artist names readable and preserve manual entry.
-- [x] Verify the dropdown visually and publish the fix.
+- [ ] Add YouTube search links for each vinyl record and category.
+- [ ] Add Spotify search links for each vinyl record and category.
+- [ ] Show listening actions in record details and KALLAX hover/details where appropriate.
+- [ ] Verify external links open safely and remain usable on mobile.
