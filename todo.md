@@ -1,6 +1,6 @@
 # Todo
 
-- [x] Build suggestion lists from existing catalog values for artists, formats, and labels.
-- [x] Add searchable dropdowns with manual text entry to the add form.
-- [x] Reuse the same autocomplete fields in the edit form.
-- [x] Verify selecting existing values and entering new values manually.
+- [ ] Replace native datalist suggestions with a custom dropdown.
+- [ ] Match the category selector styling and interaction.
+- [ ] Keep filtering and manual new-value entry available.
+- [ ] Verify add and edit forms after the replacement.
