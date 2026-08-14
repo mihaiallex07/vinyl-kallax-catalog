@@ -175,3 +175,12 @@ h2 { font-size: clamp(38px, 4vw, 60px); letter-spacing: -.05em; line-height: .9;
 .invite-button { background: var(--sage); border: 1px solid var(--sage); color: var(--paper); font: 500 10px var(--mono); letter-spacing: .06em; padding: 10px 11px; text-transform: uppercase; }
 .private-gate { border: 1px solid var(--line); padding: clamp(28px, 5vw, 58px); } .private-gate h2 { font: 400 clamp(30px, 4vw, 52px) var(--display); margin: 12px 0; } .private-gate h2 i { color: var(--oxide); } .private-gate p:not(.eyebrow) { color: var(--ink-soft); line-height: 1.6; max-width: 450px; }
 @media (max-width: 800px) { .kallax-header { padding: 15px 18px; } .kallax-meta { display: none; } .kallax-intro { align-items: flex-start; flex-direction: column; gap: 30px; } .kallax-actions { align-items: flex-start; } .kallax-frame { border-width: 12px; gap: 7px; padding: 8px; transform: none; } .kallax-cubby { min-height: 190px; padding: 8px; } .cubby-label { font-size: 7px; } .vinyl-hover-card { bottom: 16px; left: 16px; right: 16px; top: auto; } }
+
+/* Record actions: edit is quiet and reversible; delete is explicit and visually separated. */
+.detail-actions { border-top: 1px solid var(--line); display: flex; gap: 9px; margin-top: 24px; padding-top: 18px; }
+.edit-record-button, .delete-record-button { align-items: center; display: inline-flex; font: 10px var(--mono); gap: 7px; justify-content: center; letter-spacing: .05em; padding: 11px 14px; text-transform: uppercase; }
+.edit-record-button { background: var(--ink); border: 1px solid var(--ink); color: var(--paper); }
+.delete-record-button { background: transparent; border: 1px solid rgba(154,61,49,.45); color: var(--oxide); }
+.edit-record-button:hover, .delete-record-button:hover { transform: translateY(-1px); }
+.delete-record-button:hover { background: rgba(154,61,49,.08); }
+@media (max-width: 620px) { .detail-actions { flex-direction: column; } .edit-record-button, .delete-record-button { width: 100%; } }

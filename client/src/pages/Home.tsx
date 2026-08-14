@@ -1,9 +1,9 @@
 /* Hi-Fi Afterglow: editorial vinyl catalog, warm paper surfaces, oxide-red signal color, asymmetric rail + inventory rows. */
 import { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
-import { arrayUnion, collection, doc, getDoc, getDocs, orderBy, query as firestoreQuery, setDoc, updateDoc, writeBatch } from "firebase/firestore";
+import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query as firestoreQuery, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { auth, db, googleProvider } from "@/lib/firebase";
-import { Search, SlidersHorizontal, Disc3, ArrowUpRight, X, ChevronDown, Library, ScanSearch, Plus, Download } from "lucide-react";
+import { Search, SlidersHorizontal, Disc3, ArrowUpRight, X, ChevronDown, Library, ScanSearch, Plus, Download, Pencil, Trash2 } from "lucide-react";
 import { catalog, type VinylRecord } from "@/data/catalog";
 
 const heroImage = "/manus-storage/vinyl-hero_3aab6521.jpg";
@@ -52,7 +52,14 @@ function AddVinylSheet({ onClose, onAdded, nextPosition }: { onClose: () => void
   </aside></div>;
 }
 
-function DetailSheet({ record, onClose }: { record: VinylRecord | null; onClose: () => void }) {
+function EditVinylSheet({ record, onClose, onUpdated }: { record: VinylRecord; onClose: () => void; onUpdated: (record: VinylRecord) => void }) {
+  const [form, setForm] = useState({ artist: record.artist, title: record.title, year: String(record.year), category: record.category, format: record.format, label: record.label, catalog: record.catalog });
+  const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
+  const submit = (event: React.FormEvent) => { event.preventDefault(); if (!form.artist.trim() || !form.title.trim()) return; onUpdated({ ...record, artist: form.artist.trim(), title: form.title.trim(), year: form.year.trim() || "—", format: form.format.trim() || "LP, Album", label: form.label.trim(), category: form.category, group: form.artist.trim(), catalog: form.catalog.trim() }); onClose(); };
+  return <div className="sheet-backdrop" onClick={onClose}><aside className="detail-sheet add-sheet" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label="Editează vinil"><button className="icon-button close-button" onClick={onClose} aria-label="Închide"><X size={20} /></button><p className="eyebrow">KALLAX / EDIT ENTRY</p><h2>Editează<br /><i>vinilul.</i></h2><form className="add-form" onSubmit={submit}><label>Artist *<input required value={form.artist} onChange={(e) => update("artist", e.target.value)} /></label><label>Titlu *<input required value={form.title} onChange={(e) => update("title", e.target.value)} /></label><div className="form-two"><label>An<input value={form.year} onChange={(e) => update("year", e.target.value)} /></label><label>Format<input value={form.format} onChange={(e) => update("format", e.target.value)} /></label></div><label>Categorie<select value={form.category} onChange={(e) => update("category", e.target.value)}>{categories.map((category) => <option key={category} value={category}>{categoryShort(category)}</option>)}</select></label><div className="form-two"><label>Label<input value={form.label} onChange={(e) => update("label", e.target.value)} /></label><label>Catalog #<input value={form.catalog} onChange={(e) => update("catalog", e.target.value)} /></label></div><button className="submit-button" type="submit"><Pencil size={17} /> Salvează modificările</button></form></aside></div>;
+}
+
+function DetailSheet({ record, onClose, onEdit, onDelete }: { record: VinylRecord | null; onClose: () => void; onEdit: (record: VinylRecord) => void; onDelete: (record: VinylRecord) => void }) {
   if (!record) return null;
   return (
     <div className="sheet-backdrop" onClick={onClose}>
@@ -69,6 +76,7 @@ function DetailSheet({ record, onClose }: { record: VinylRecord | null; onClose:
           <div><span>Label</span><strong>{record.label || "—"}</strong></div>
         </div>
         <div className="detail-note"><span>Artist group</span><p>{record.group}</p></div>
+        <div className="detail-actions"><button className="edit-record-button" onClick={() => onEdit(record)}><Pencil size={15} /> Editează</button><button className="delete-record-button" onClick={() => onDelete(record)}><Trash2 size={15} /> Șterge</button></div>
       </aside>
     </div>
   );
@@ -78,6 +86,7 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("Toată colecția");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<VinylRecord | null>(null);
+  const [editing, setEditing] = useState<VinylRecord | null>(null);
   const [sortBy, setSortBy] = useState<"position" | "artist" | "year">("position");
   const ownerEmail = "mihai.alex480@gmail.com";
   const [sharedRecords, setSharedRecords] = useState<VinylRecord[]>([]);
@@ -91,6 +100,8 @@ export default function Home() {
   useEffect(() => onAuthStateChanged(auth, async (user) => { setAuthUser(user); setAuthLoading(false); setSharedRecords([]); setIsMember(false); if (!user) return; try { const owner = user.email?.toLowerCase() === ownerEmail; const metaRef = doc(db, "collections", "main"); const metaSnapshot = await getDoc(metaRef); if (!metaSnapshot.exists() && owner) { await setDoc(metaRef, { ownerEmail, memberEmails: [ownerEmail], updatedAt: new Date().toISOString() }); const batch = writeBatch(db); catalog.forEach((record) => batch.set(doc(db, "vinylRecords", String(record.position)), { ...record, ownerEmail })); await batch.commit(); setSharedRecords(catalog); setIsMember(true); } else if (metaSnapshot.exists()) { const members = (metaSnapshot.data().memberEmails || []) as string[]; const member = user.email ? members.includes(user.email.toLowerCase()) : false; setIsMember(member); if (!member) { setAuthError("Acest cont nu are acces la colecția privată."); return; } const snapshot = await getDocs(firestoreQuery(collection(db, "vinylRecords"), orderBy("position", "asc"))); setSharedRecords(snapshot.docs.map((item) => item.data() as VinylRecord)); } else { setAuthError("Colecția nu este încă inițializată de contul proprietar."); } } catch (error) { console.error(error); setAuthError("Nu am putut încărca colecția privată din Firebase."); } }), []);
   const allRecords = sharedRecords;
   const addRecord = async (record: VinylRecord) => { if (!authUser || !isMember) { setAuthError("Ai nevoie de acces la colecție înainte să adaugi un vinil."); return; } try { const stored = { ...record, ownerEmail }; await setDoc(doc(db, "vinylRecords", String(record.position)), stored); setSharedRecords((current) => [...current, record].sort((a, b) => a.position - b.position)); } catch (error) { console.error(error); setAuthError("Vinilul nu a putut fi salvat în Firebase."); } };
+  const updateRecord = async (record: VinylRecord) => { try { await updateDoc(doc(db, "vinylRecords", String(record.position)), { ...record, ownerEmail }); setSharedRecords((current) => current.map((item) => item.position === record.position ? record : item)); setSelected(record); } catch (error) { console.error(error); setAuthError("Modificările nu au putut fi salvate."); } };
+  const deleteRecord = async (record: VinylRecord) => { if (!window.confirm(`Ștergi definitiv „${record.title}” de ${record.artist}?`)) return; try { await deleteDoc(doc(db, "vinylRecords", String(record.position))); setSharedRecords((current) => current.filter((item) => item.position !== record.position)); setSelected(null); } catch (error) { console.error(error); setAuthError("Vinilul nu a putut fi șters."); } };
   const inviteCollaborator = async () => { if (!authUser || authUser.email?.toLowerCase() !== ownerEmail) { setAuthError("Doar proprietarul colecției poate invita colaboratori."); return; } const email = inviteEmail.trim().toLowerCase(); if (!email) return; try { await updateDoc(doc(db, "collections", "main"), { memberEmails: arrayUnion(email), updatedAt: new Date().toISOString() }); setShowInvite(false); setAuthError(`Invitația pentru ${email} a fost adăugată. Persoana se poate autentifica acum cu Google.`); } catch (error) { console.error(error); setAuthError("Invitația nu a putut fi salvată."); } };
   const exportLocalRecords = () => { const blob = new Blob([JSON.stringify(allRecords, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = "vinyl-kallax-collection.json"; link.click(); URL.revokeObjectURL(url); };
   const signIn = async () => { try { setAuthError(""); await signInWithPopup(auth, googleProvider); } catch (error) { console.error(error); const code = typeof error === "object" && error && "code" in error ? String((error as { code: string }).code) : "unknown"; setAuthError(`Autentificarea Google nu a reușit (${code}). Verifică setările Firebase.`); } };
@@ -134,7 +145,7 @@ export default function Home() {
       </main>
       {authError && <div className="auth-toast" role="status">{authError}<button onClick={() => setAuthError("")} aria-label="Închide mesajul"><X size={15} /></button></div>}
       <footer className="site-footer"><span>VINYL KALLAX CATALOG</span><span>{authUser ? `Shared cloud archive / ${authUser.email}` : "Shared archive / sign in to sync"}</span><span>01—{String(allRecords.length).padStart(3, "0")}</span></footer>
-      <DetailSheet record={selected} onClose={() => setSelected(null)} />{showAdd && <AddVinylSheet nextPosition={Math.max(...allRecords.map((item) => item.position), 0) + 1} onAdded={addRecord} onClose={() => setShowAdd(false)} />}{showInvite && <div className="sheet-backdrop" onClick={() => setShowInvite(false)}><aside className="detail-sheet add-sheet" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label="Invită colaborator"><button className="icon-button close-button" onClick={() => setShowInvite(false)} aria-label="Închide"><X size={20} /></button><p className="eyebrow">COLLECTION / ACCESS</p><h2>Invită un<br /><i>colaborator.</i></h2><p className="form-intro">Colaboratorul va putea vedea colecția și adăuga viniluri după autentificarea cu adresa Google invitată.</p><form className="add-form" onSubmit={(event) => { event.preventDefault(); inviteCollaborator(); }}><label>Adresă Google<input type="email" required value={inviteEmail} onChange={(event) => setInviteEmail(event.target.value)} /></label><button className="submit-button" type="submit">Trimite invitația</button></form></aside></div>}
+      <DetailSheet record={selected} onClose={() => setSelected(null)} onEdit={(record) => { setEditing(record); setSelected(null); }} onDelete={deleteRecord} />{editing && <EditVinylSheet record={editing} onClose={() => setEditing(null)} onUpdated={updateRecord} />}{showAdd && <AddVinylSheet nextPosition={Math.max(...allRecords.map((item) => item.position), 0) + 1} onAdded={addRecord} onClose={() => setShowAdd(false)} />}{showInvite && <div className="sheet-backdrop" onClick={() => setShowInvite(false)}><aside className="detail-sheet add-sheet" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label="Invită colaborator"><button className="icon-button close-button" onClick={() => setShowInvite(false)} aria-label="Închide"><X size={20} /></button><p className="eyebrow">COLLECTION / ACCESS</p><h2>Invită un<br /><i>colaborator.</i></h2><p className="form-intro">Colaboratorul va putea vedea colecția și adăuga viniluri după autentificarea cu adresa Google invitată.</p><form className="add-form" onSubmit={(event) => { event.preventDefault(); inviteCollaborator(); }}><label>Adresă Google<input type="email" required value={inviteEmail} onChange={(event) => setInviteEmail(event.target.value)} /></label><button className="submit-button" type="submit">Trimite invitația</button></form></aside></div>}
     </div>
   );
 }
