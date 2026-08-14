@@ -1,6 +1,6 @@
 # Todo
 
-- [x] Copy the exact Category select markup and classes for Artist, Format, and Label.
-- [x] Add a separate manual-entry control without changing the main select appearance.
-- [x] Verify visual parity and selection behavior in add and edit forms.
-- [x] Verify production build and live deploy.
+- [ ] Replace the browser-native white list with a cream custom dropdown for Artist, Format, and Label.
+- [ ] Match Category selected-row, border, spacing, and typography treatment.
+- [ ] Keep long artist names readable and preserve manual entry.
+- [ ] Verify the dropdown visually and publish the fix.
