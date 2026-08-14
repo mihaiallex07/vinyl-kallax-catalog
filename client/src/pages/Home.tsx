@@ -21,9 +21,9 @@ const formatSuggestions = Array.from(new Set(catalog.map((item) => item.format).
 const labelSuggestions = Array.from(new Set(catalog.map((item) => item.label).filter(Boolean))).sort((a, b) => a.localeCompare(b, "ro"));
 
 function SuggestField({ label, value, onChange, options, placeholder }: { label: string; value: string; onChange: (value: string) => void; options: string[]; placeholder?: string }) {
-  const [open, setOpen] = useState(false);
-  const filtered = options.filter((option) => option.toLocaleLowerCase("ro").includes(value.toLocaleLowerCase("ro"))).slice(0, 12);
-  return <div className="suggest-field" onBlur={() => window.setTimeout(() => setOpen(false), 120)}><label>{label}<div className="suggest-control"><input value={value} onFocus={() => setOpen(true)} onChange={(event) => { onChange(event.target.value); setOpen(true); }} placeholder={placeholder} /><button type="button" className="suggest-toggle" onMouseDown={(event) => event.preventDefault()} onClick={() => setOpen((current) => !current)} aria-label={`Deschide sugestiile pentru ${label}`}><ChevronDown size={16} /></button></div></label>{open && <div className="suggest-menu" role="listbox">{filtered.map((option) => <button type="button" key={option} role="option" className="suggest-option" onMouseDown={(event) => event.preventDefault()} onClick={() => { onChange(option); setOpen(false); }}>{option}</button>)}{filtered.length === 0 && <div className="suggest-empty">Valoare nouă — poate fi introdusă manual</div>}</div>}</div>;
+  const [manual, setManual] = useState(Boolean(value) && !options.includes(value));
+  const selectedValue = manual ? "__manual__" : value;
+  return <div className="select-or-manual"><label>{label}<select value={selectedValue} onChange={(event) => { const next = event.target.value; if (next === "__manual__") { setManual(true); onChange(""); } else { setManual(false); onChange(next); } }}><option value="">{placeholder || "Selectează o valoare"}</option>{options.map((option) => <option key={option} value={option}>{option}</option>)}<option value="__manual__">Introdu manual…</option></select></label>{manual && <label className="manual-inline">Valoare nouă<input autoFocus value={value} onChange={(event) => onChange(event.target.value)} placeholder="Scrie valoarea nouă" /></label>}</div>;
 }
 
 function RecordRow({ record, onOpen }: { record: VinylRecord; onOpen: (record: VinylRecord) => void }) {

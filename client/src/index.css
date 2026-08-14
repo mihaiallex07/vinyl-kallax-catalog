@@ -211,3 +211,8 @@ h2 { font-size: clamp(38px, 4vw, 60px); letter-spacing: -.05em; line-height: .9;
 .suggest-option { background: transparent; border: 0; color: #f4e7d3; display: block; font: 11px var(--mono); padding: 12px 14px; text-align: left; width: 100%; }
 .suggest-option:hover, .suggest-option:focus { background: var(--oxide); color: #fff8ec; outline: none; }
 .suggest-empty { color: #cabba7; font: 10px var(--mono); padding: 14px; }
+
+/* Native selector parity: Artist, Format, and Label now mirror Category exactly; manual values open a matching text field below. */
+.select-or-manual { min-width: 0; }
+.select-or-manual select { width: 100%; }
+.manual-inline { display: block; margin-top: 9px; }
